@@ -48,3 +48,10 @@ install(
         DESTINATION include/safeheron
         FILES_MATCHING PATTERN "*.h"
 )
+
+## Install proto files
+install(
+        DIRECTORY proto/
+        DESTINATION include/safeheron/proto
+        FILES_MATCHING PATTERN "*.proto"
+)
