@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package proto_basic;
+package safeheron.proto;
 
 message PailPub{
     string n = 1;

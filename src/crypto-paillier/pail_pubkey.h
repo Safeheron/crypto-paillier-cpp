@@ -86,9 +86,9 @@ public:
 
     safeheron::bignum::BN n_sqr() const { return n_sqr_; }
 
-    bool ToProtoObject(proto_basic::PailPub &pail_pub) const;
+    bool ToProtoObject(safeheron::proto::PailPub &pail_pub) const;
 
-    bool FromProtoObject(const proto_basic::PailPub &pail_pub);
+    bool FromProtoObject(const safeheron::proto::PailPub &pail_pub);
 
     bool ToBase64(std::string &base64) const;
 

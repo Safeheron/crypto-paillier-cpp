@@ -135,7 +135,7 @@ BN PailPubKey::Mul(const BN &e_a, const BN &k) const {
     return e_a.PowM(k, n_sqr_);
 }
 
-bool PailPubKey::ToProtoObject(proto_basic::PailPub &pail_pub) const {
+bool PailPubKey::ToProtoObject(safeheron::proto::PailPub &pail_pub) const {
     string str;
     n_.ToHexStr(str);
     pail_pub.set_n(str);
@@ -144,7 +144,7 @@ bool PailPubKey::ToProtoObject(proto_basic::PailPub &pail_pub) const {
     return true;
 }
 
-bool PailPubKey::FromProtoObject(const proto_basic::PailPub &pail_pub) {
+bool PailPubKey::FromProtoObject(const safeheron::proto::PailPub &pail_pub) {
     bool ok = true;
     n_ = BN::FromHexStr(pail_pub.n());
     ok = (n_ != 0);
@@ -160,7 +160,7 @@ bool PailPubKey::FromProtoObject(const proto_basic::PailPub &pail_pub) {
 
 bool PailPubKey::ToBase64(string &base64) const {
     base64.clear();
-    proto_basic::PailPub proto_object;
+    safeheron::proto::PailPub proto_object;
     ToProtoObject(proto_object);
     string proto_bin = proto_object.SerializeAsString();
     base64 = safeheron::encode::base64::EncodeToBase64(proto_bin, true);
@@ -172,7 +172,7 @@ bool PailPubKey::FromBase64(const string &base64) {
 
     string data = safeheron::encode::base64::DecodeFromBase64(base64);
 
-    proto_basic::PailPub proto_object;
+    safeheron::proto::PailPub proto_object;
     ok = proto_object.ParseFromString(data);
     if (!ok) return false;
 
@@ -182,7 +182,7 @@ bool PailPubKey::FromBase64(const string &base64) {
 bool PailPubKey::ToJsonString(string &json_str) const {
     bool ok = true;
     json_str.clear();
-    proto_basic::PailPub proto_object;
+    safeheron::proto::PailPub proto_object;
     ok = ToProtoObject(proto_object);
     if (!ok) return false;
 
@@ -195,7 +195,7 @@ bool PailPubKey::ToJsonString(string &json_str) const {
 }
 
 bool PailPubKey::FromJsonString(const string &json_str) {
-    proto_basic::PailPub proto_object;
+    safeheron::proto::PailPub proto_object;
     JsonParseOptions jp_option;
     jp_option.ignore_unknown_fields = true;
     Status stat = JsonStringToMessage(json_str, &proto_object);

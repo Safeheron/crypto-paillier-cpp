@@ -78,9 +78,9 @@ public:
     safeheron::bignum::BN lambda() const { return lambda_; }
 
 
-    bool ToProtoObject(proto_basic::PailPriv &pail_priv) const;
+    bool ToProtoObject(safeheron::proto::PailPriv &pail_priv) const;
 
-    bool FromProtoObject(const proto_basic::PailPriv &pail_priv);
+    bool FromProtoObject(const safeheron::proto::PailPriv &pail_priv);
 
     bool ToBase64(std::string &base64) const;
 

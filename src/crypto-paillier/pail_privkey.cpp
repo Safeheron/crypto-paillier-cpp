@@ -121,7 +121,7 @@ BN PailPrivKey::Decrypt_v0(const BN &c) const {
 }
 
 
-bool PailPrivKey::ToProtoObject(proto_basic::PailPriv &pail_priv) const {
+bool PailPrivKey::ToProtoObject(safeheron::proto::PailPriv &pail_priv) const {
     bool ok = true;
     string str;
 
@@ -194,7 +194,7 @@ bool PailPrivKey::ToProtoObject(proto_basic::PailPriv &pail_priv) const {
     return true;
 }
 
-bool PailPrivKey::FromProtoObject(const proto_basic::PailPriv &pail_priv) {
+bool PailPrivKey::FromProtoObject(const safeheron::proto::PailPriv &pail_priv) {
     bool ok = true;
     lambda_ = BN::FromHexStr(pail_priv.lambda());
     ok = (lambda_ != 0);
@@ -250,7 +250,7 @@ bool PailPrivKey::ToBase64(string &base64) const {
     bool ok = true;
     base64.clear();
 
-    proto_basic::PailPriv proto_object;
+    safeheron::proto::PailPriv proto_object;
     ok = ToProtoObject(proto_object);
     if (!ok) return false;
 
@@ -264,7 +264,7 @@ bool PailPrivKey::FromBase64(const string &base64) {
 
     string data = safeheron::encode::base64::DecodeFromBase64(base64);
 
-    proto_basic::PailPriv proto_object;
+    safeheron::proto::PailPriv proto_object;
     ok = proto_object.ParseFromString(data);
     if (!ok) return false;
 
@@ -274,7 +274,7 @@ bool PailPrivKey::FromBase64(const string &base64) {
 bool PailPrivKey::ToJsonString(string &json_str) const {
     bool ok = true;
     json_str.clear();
-    proto_basic::PailPriv proto_object;
+    safeheron::proto::PailPriv proto_object;
     ok = ToProtoObject(proto_object);
     if (!ok) return false;
 
@@ -287,7 +287,7 @@ bool PailPrivKey::ToJsonString(string &json_str) const {
 }
 
 bool PailPrivKey::FromJsonString(const string &json_str) {
-    proto_basic::PailPriv proto_object;
+    safeheron::proto::PailPriv proto_object;
     JsonParseOptions jp_option;
     jp_option.ignore_unknown_fields = true;
     Status stat = JsonStringToMessage(json_str, &proto_object);
