@@ -6,12 +6,18 @@ pkg_search_module(PROTOBUF REQUIRED protobuf)  # this looks for opencv.pc file
 
 include_directories("../src")
 
+option(ENABLE_ASSEMBLE "Enable assemble" OFF)
+if (NOT ${ENABLE_ASSEMBLE})
+    link_libraries(CryptoPaillier
+            ${GTEST_BOTH_LIBRARIES}
+            pthread )
+else()
+    link_libraries(${CMAKE_PROJECT_NAME}
+            ${GTEST_BOTH_LIBRARIES}
+            pthread )
+endif()
+
 add_executable(paillier-test paillier-test.cpp)
-target_link_libraries( paillier-test
-        CryptoBN
-        CryptoPaillier
-        ${GTEST_BOTH_LIBRARIES}
-        pthread )
 add_test(NAME test-paillier COMMAND paillier-test)
 
 
