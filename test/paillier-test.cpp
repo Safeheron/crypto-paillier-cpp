@@ -1,6 +1,3 @@
-//
-// Created by Sword03 on 2020/10/22.
-//
 #include "gtest/gtest.h"
 #include "crypto-bn/rand.h"
 #include "crypto-bn/bn.h"

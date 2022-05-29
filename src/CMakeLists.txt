@@ -14,8 +14,11 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
         ${PROTOBUF_INCLUDE_DIRS}
         ${OPENSSL_INCLUDE_DIR}
+        /usr/local/include  # This directory is included default on linux but not on Mac os
         )
 
+# This directory is included default on linux but not on Mac os
+target_link_directories(${PROJECT_NAME} PUBLIC /usr/local/lib)
 target_link_libraries(${CMAKE_PROJECT_NAME} ${PROTOBUF_LIBRARIES}
         OpenSSL::Crypto
         -ldl

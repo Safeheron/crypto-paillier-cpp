@@ -1,7 +1,12 @@
-//
-// Created by Sword03 on 2020/10/22.
-//
-#include "gtest/gtest.h"
+/*
+ * Copyright 2020-2022 Safeheron Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License 2.0 (the "License").  You may not use
+ * this file except in compliance with the License.  You can obtain a copy
+ * in the file LICENSE in the source distribution or at
+ * https://www.safeheron.com/opensource/license.html
+ */
+
 #include "crypto-bn/rand.h"
 #include "crypto-bn/bn.h"
 #include "exception/located_exception.h"
@@ -31,6 +36,6 @@ int main(int argc, char **argv) {
     BN expect_m = priv.Decrypt(c);
     expect_m.ToHexStr(s);
     std::cout << "expect_m = " << s << std::endl;
-    EXPECT_EQ(m , expect_m);
+    std::cout << (m == expect_m) << std::endl;
     return 0;
 }

@@ -10,6 +10,7 @@ option(ENABLE_ASSEMBLE "Enable assemble" OFF)
 if (NOT ${ENABLE_ASSEMBLE})
     link_libraries(CryptoPaillier
             ${GTEST_BOTH_LIBRARIES}
+            /usr/local/lib
             pthread )
 else()
     link_libraries(${CMAKE_PROJECT_NAME}

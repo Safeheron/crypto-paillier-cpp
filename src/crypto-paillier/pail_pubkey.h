@@ -1,9 +1,14 @@
-//
-// Created by Sword03 on 2021/6/9.
-//
+/*
+ * Copyright 2020-2022 Safeheron Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License 2.0 (the "License").  You may not use
+ * this file except in compliance with the License.  You can obtain a copy
+ * in the file LICENSE in the source distribution or at
+ * https://www.safeheron.com/opensource/license.html
+ */
 
-#ifndef CPP_MPC_PAIL_PUBKEY_H
-#define CPP_MPC_PAIL_PUBKEY_H
+#ifndef SAFEHERON_CRYPTO_PAIL_PUBKEY_H
+#define SAFEHERON_CRYPTO_PAIL_PUBKEY_H
 
 #include <string>
 #include "crypto-bn/bn.h"
@@ -109,4 +114,4 @@ private:
 };
 
 
-#endif //CPP_MPC_PAIL_PUBKEY_H
+#endif //SAFEHERON_CRYPTO_PAIL_PUBKEY_H
