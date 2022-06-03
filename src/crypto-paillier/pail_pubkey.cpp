@@ -60,26 +60,14 @@ std::string PailPubKey::Inspect() const {
  * @param {BN} r : random number
  */
 BN PailPubKey::EncryptWithR(const BN &m, const BN &r) const {
-    //clock_t start, end;
-    //start = clock();
     BN gm = (m * n_ + 1) % n_sqr_;
-    //end = clock();
-    //std::cout << ">>>>>>>>>>>>>> time: " << double(end - start) / CLOCKS_PER_SEC << std::endl;
     BN rn = r.PowM(n_, n_sqr_);
-    //end = clock();
-    //std::cout << ">>>>>>>>>>>>>> time: " << double(end - start) / CLOCKS_PER_SEC << std::endl;
     return (gm * rn) % n_sqr_;
 }
 
 BN PailPubKey::EncryptWithR_v0(const BN &m, const BN &r) const {
-    //clock_t start, end;
-    //start = clock();
     BN gm = g_.PowM(m, n_sqr_);
-    //end = clock();
-    //std::cout << ">>>>>>>>>>>>>> time: " << double(end - start) / CLOCKS_PER_SEC << std::endl;
     BN rn = r.PowM(n_, n_sqr_);
-    //end = clock();
-    //std::cout << ">>>>>>>>>>>>>> time: " << double(end - start) / CLOCKS_PER_SEC << std::endl;
     return (gm * rn) % n_sqr_;
 }
 
