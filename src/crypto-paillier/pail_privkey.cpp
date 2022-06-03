@@ -10,7 +10,6 @@
 
 
 #include "pail_privkey.h"
-#include <sstream>
 #include <google/protobuf/util/json_util.h>
 #include "crypto-bn/rand.h"
 #include "crypto-encode/base64.h"
@@ -85,13 +84,16 @@ PailPrivKey::PailPrivKey() {
 }
 
 std::string PailPrivKey::Inspect() const {
-    std::ostringstream ostr;
-    ostr << "Pail public key: "
-         << "\n  -  lambda: " << lambda_.Inspect()
-         << "\n  -  mu    : " << mu_.Inspect()
-         << "\n  -  n     : " << n_.Inspect()
-         << std::endl;
-    return ostr.str();
+    std::string str;
+    str.append("Paillier's Private Key: ");
+    str.append("\n  -  lambda: ");
+    str.append(lambda_.Inspect());
+    str.append("\n  -  mu: ");
+    str.append(mu_.Inspect());
+    str.append("\n  -  n: ");
+    str.append(n_.Inspect());
+    str.append("\n");
+    return str;
 }
 
 

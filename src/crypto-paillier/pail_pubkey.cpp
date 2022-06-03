@@ -9,7 +9,6 @@
 
 
 #include "pail_pubkey.h"
-#include <sstream>
 #include <google/protobuf/util/json_util.h>
 #include "crypto-bn/rand.h"
 #include "crypto-encode/base64.h"
@@ -43,12 +42,14 @@ PailPubKey::PailPubKey() {
 }
 
 std::string PailPubKey::Inspect() const {
-    std::ostringstream ostr;
-    ostr << "Pail public key: "
-         << "\n  - n: " << n_.Inspect()
-         << "\n  - g: " << g_.Inspect()
-         << std::endl;
-    return ostr.str();
+    std::string str;
+    str.append("Paillier's public key: ");
+    str.append("\n  -  n: ");
+    str.append(n_.Inspect());
+    str.append("\n  -  g: ");
+    str.append(g_.Inspect());
+    str.append("\n");
+    return str;
 }
 
 /**
