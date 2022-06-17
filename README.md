@@ -144,4 +144,4 @@ expect_m = AA5441B80B1F4BD5A0F9A93B95276EB1D53BF4875538DF680052018FF35BA6707E39B
 ```
 
 # Development Process & Contact
-This library is maintained by Safeheron. Contributions are highly welcomed! Besides GitHub issues and PRs, feel free to reach out by mail or join Safeheron Telegram for discussions on code and research.
+This library is maintained by Safeheron. Contributions are highly welcomed! Besides GitHub issues and PRs, feel free to reach out by mail.
