@@ -24,12 +24,11 @@ namespace pail {
  */
 void CreateKeyPair(PailPrivKey &priv, PailPubKey &pub, int key_bits) {
     assert(key_bits == 1024 || key_bits == 2048 || key_bits == 3072 || key_bits == 4096);
-    int key_byte_size = key_bits / 8;
-    BN p = safeheron::rand::RandomPrimeStrict(key_byte_size / 2);
+    BN p = safeheron::rand::RandomSafePrimeStrict(key_bits / 2);
     BN q;
     // make sure: p != q
     do {
-        q = safeheron::rand::RandomPrimeStrict(key_byte_size / 2);
+        q = safeheron::rand::RandomSafePrimeStrict(key_bits / 2 - 1);
     } while (p == q);
 
     // make sure: p > q
