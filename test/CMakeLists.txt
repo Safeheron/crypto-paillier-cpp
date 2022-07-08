@@ -18,7 +18,7 @@ else()
             pthread )
 endif()
 
-add_executable(paillier-test paillier-test.cpp)
-add_test(NAME test-paillier COMMAND paillier-test)
+add_executable(paillier-test paillier-test.cpp CTimer.cpp)
+add_test(NAME slow-paillier-test COMMAND paillier-test)
 
 

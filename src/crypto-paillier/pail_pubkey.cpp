@@ -43,12 +43,7 @@ PailPubKey::PailPubKey() {
 
 std::string PailPubKey::Inspect() const {
     std::string str;
-    str.append("Paillier's public key: ");
-    str.append("\n  -  n: ");
-    str.append(n_.Inspect());
-    str.append("\n  -  g: ");
-    str.append(g_.Inspect());
-    str.append("\n");
+    this->ToJsonString(str);
     return str;
 }
 
@@ -85,13 +80,6 @@ BN PailPubKey::Encrypt(const BN &m) const {
     return (gm * rn) % n_sqr_;
 }
 
-BN PailPubKey::Encrypt_v0(const BN &m) const {
-    BN r = safeheron::rand::RandomBNLtGcd(n_);
-    BN gm = g_.PowM(m, n_sqr_);
-    BN rn = r.PowM(n_, n_sqr_);
-    return (gm * rn) % n_sqr_;
-}
-
 
 /**
  * Homomorphic add:
@@ -99,7 +87,7 @@ BN PailPubKey::Encrypt_v0(const BN &m) const {
  * @param {BN} e_a: encrypted num a
  * @param {BN} e_b: encrypted num b
  */
-BN PailPubKey::Add(const BN &e_a, const BN &e_b) const {
+BN PailPubKey::HomomorphicAdd(const BN &e_a, const BN &e_b) const {
     return (e_a * e_b) % n_sqr_;
 }
 
@@ -109,13 +97,8 @@ BN PailPubKey::Add(const BN &e_a, const BN &e_b) const {
  * @param {BN} e_a: encrypted num a
  * @param {BN} b: plain num b
  */
-BN PailPubKey::AddPlain(const BN &e_a, const BN &b) const {
+BN PailPubKey::HomomorphicAddPlain(const BN &e_a, const BN &b) const {
     BN gb = (b * n_ + 1) % n_sqr_;
-    return (e_a * gb) % n_sqr_;
-}
-
-BN PailPubKey::AddPlain_v0(const BN &e_a, const BN &b) const {
-    BN gb = g_.PowM(b, n_sqr_);
     return (e_a * gb) % n_sqr_;
 }
 
@@ -125,7 +108,7 @@ BN PailPubKey::AddPlain_v0(const BN &e_a, const BN &b) const {
  * @param {BN} e_a: encrypted num a
  * @param {BN} k: plain num to multiple
  */
-BN PailPubKey::Mul(const BN &e_a, const BN &k) const {
+BN PailPubKey::HomomorphicMulPlain(const BN &e_a, const BN &k) const {
     return e_a.PowM(k, n_sqr_);
 }
 

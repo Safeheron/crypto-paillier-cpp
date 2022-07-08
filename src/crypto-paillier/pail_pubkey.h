@@ -56,26 +56,22 @@ public:
      */
     safeheron::bignum::BN Encrypt(const safeheron::bignum::BN &m) const;
 
-    safeheron::bignum::BN Encrypt_v0(const safeheron::bignum::BN &m) const;
-
     /**
      * Homomorphic add:
      *     E(a+b) = E(a) * E(b) mod n^2
      * @param {safeheron::bignum::BN} e_a: encrypted num a
      * @param {safeheron::bignum::BN} e_b: encrypted num b
      */
-    safeheron::bignum::BN Add(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &e_b) const;
+    safeheron::bignum::BN HomomorphicAdd(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &e_b) const;
 
     /**
-     * Homomorphic add:
+     * Homomorphic add plain:
      *     E(a+b) = E(a) * g^b mod n^2
      *            = E(a) * (1 + b*n) mod n^2
      * @param {safeheron::bignum::BN} e_a: encrypted num a
      * @param {safeheron::bignum::BN} b: plain num b
      */
-    safeheron::bignum::BN AddPlain(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &b) const;
-
-    safeheron::bignum::BN AddPlain_v0(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &b) const;
+    safeheron::bignum::BN HomomorphicAddPlain(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &b) const;
 
     /**
      * Homomorphic multiple:
@@ -83,7 +79,7 @@ public:
      * @param {safeheron::bignum::BN} e_a: encrypted num a
      * @param {safeheron::bignum::BN} k: plain num to multiple
      */
-    safeheron::bignum::BN Mul(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &k) const;
+    safeheron::bignum::BN HomomorphicMulPlain(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &k) const;
 
     safeheron::bignum::BN n() const { return n_; }
 

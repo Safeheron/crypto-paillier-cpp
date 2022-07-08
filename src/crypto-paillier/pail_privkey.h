@@ -32,7 +32,7 @@ public:
     PailPrivKey();
 
     /**
-     * Construct of PailPrivKey
+     * Construct of PailPrivKey. The decryption will be slow.
      * @param lambda = (p-1)(q-1)
      * @param mu = lambda^-1 mod n
      * @param n = pq
@@ -41,7 +41,7 @@ public:
     PailPrivKey(const safeheron::bignum::BN &lambda, const safeheron::bignum::BN &mu, const safeheron::bignum::BN &n);
 
     /**
-     * Construct of PailPrivKey
+     * Construct of PailPrivKey. The decryption will be fast.
      * @param lambda = (p-1)(q-1)
      * @param mu = lambda^-1 mod n
      * @param n = pq
@@ -73,8 +73,6 @@ public:
      */
     safeheron::bignum::BN Decrypt(const safeheron::bignum::BN &c) const;
 
-    safeheron::bignum::BN Decrypt_v0(const safeheron::bignum::BN &c) const;
-
     safeheron::bignum::BN n() const { return n_; }
 
     safeheron::bignum::BN n_sqr() const { return n_sqr_; }
@@ -95,6 +93,10 @@ public:
     bool ToJsonString(std::string &json_str) const;
 
     bool FromJsonString(const std::string &json_str);
+
+private:
+    safeheron::bignum::BN DecryptFast(const safeheron::bignum::BN &c) const;
+    safeheron::bignum::BN DecryptSlowly(const safeheron::bignum::BN &c) const;
 
 private:
     safeheron::bignum::BN lambda_;  // lambda = (p-1)(q-1)

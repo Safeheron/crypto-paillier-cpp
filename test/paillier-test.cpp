@@ -3,6 +3,7 @@
 #include "crypto-bn/bn.h"
 #include "exception/located_exception.h"
 #include "crypto-paillier/pail.h"
+#include "CTimer.h"
 using namespace std;
 using namespace safeheron::bignum;
 using safeheron::pail::PailPrivKey;
@@ -299,11 +300,23 @@ class PaillierTestEnv : public ::testing::Environment{
     };
 public:
     virtual void SetUp(){
-        printf("Environment Set up!");
+        printf("Environment Set up!\n");
+
+        CTimer t1("CreateKeyPair1024");
         CreateKeyPair1024(key_pair_1024.priv, key_pair_1024.pub);
+        t1.End();
+
+        CTimer t2("CreateKeyPair2048");
         CreateKeyPair2048(key_pair_2048.priv, key_pair_2048.pub);
+        t2.End();
+
+        CTimer t3("CreateKeyPair3072");
         CreateKeyPair3072(key_pair_3072.priv, key_pair_3072.pub);
+        t3.End();
+
+        CTimer t4("CreateKeyPair4096");
         CreateKeyPair4096(key_pair_4096.priv, key_pair_4096.pub);
+        t4.End();
     }
     virtual void TearDown(){
         printf("Environment Test down");
@@ -316,7 +329,7 @@ public:
 
 PaillierTestEnv * pail_env;
 
-TEST(PaillierTest, KeyGenerate)
+TEST(PaillierTest, KeyGenerate1024_10Times)
 {
     PailPrivKey priv;
     PailPubKey pub;
@@ -434,38 +447,7 @@ TEST(PaillierTest, Key_2048_Encrypt10) {
     }
 }
 
-TEST(PaillierTest, Key_2048_Encrypt10_V0) {
-    std::string s;
-    PailPrivKey priv = safeheron::pail::CreatePailPrivKey(
-            priv2048["lambda"],
-            priv2048["mu"],
-            priv2048["n"],
-            priv2048["nSqr"],
-            priv2048["p"],
-            priv2048["q"],
-            priv2048["pSqr"],
-            priv2048["qSqr"],
-            priv2048["pMinus1"],
-            priv2048["qMinus1"],
-            priv2048["hp"],
-            priv2048["hq"],
-            priv2048["qInvP"],
-            priv2048["pInvQ"]);
-
-    PailPubKey pub = safeheron::pail::CreatePailPubKey(
-            pub2048["n"],
-            pub2048["g"]);
-    for(int i = 0; i < 10; i++){
-        BN m = BN::FromHexStr(mrc2048[i][0]);
-        BN r = BN::FromHexStr(mrc2048[i][1]);
-        BN c = BN::FromHexStr(mrc2048[i][2]);
-        BN expect_c = pub.EncryptWithR_v0(m, r);
-        expect_c.ToHexStr(s);
-        EXPECT_EQ(c , expect_c);
-    }
-}
-
-TEST(PaillierTest, Key_2048_Decrypt10) {
+TEST(PaillierTest, Key_2048_Decrypt10_Fast) {
     std::string s;
     PailPrivKey priv = safeheron::pail::CreatePailPrivKey(
             priv2048["lambda"],
@@ -496,23 +478,12 @@ TEST(PaillierTest, Key_2048_Decrypt10) {
     }
 }
 
-TEST(PaillierTest, Key_2048_Decrypt10_V0) {
+TEST(PaillierTest, Key_2048_Decrypt10_Slow) {
     std::string s;
     PailPrivKey priv = safeheron::pail::CreatePailPrivKey(
             priv2048["lambda"],
             priv2048["mu"],
-            priv2048["n"],
-            priv2048["nSqr"],
-            priv2048["p"],
-            priv2048["q"],
-            priv2048["pSqr"],
-            priv2048["qSqr"],
-            priv2048["pMinus1"],
-            priv2048["qMinus1"],
-            priv2048["hp"],
-            priv2048["hq"],
-            priv2048["qInvP"],
-            priv2048["pInvQ"]);
+            priv2048["n"]);
 
     PailPubKey pub = safeheron::pail::CreatePailPubKey(
             pub2048["n"],
@@ -521,7 +492,7 @@ TEST(PaillierTest, Key_2048_Decrypt10_V0) {
         BN m = BN::FromHexStr(mrc2048[i][0]);
         BN r = BN::FromHexStr(mrc2048[i][1]);
         BN c = BN::FromHexStr(mrc2048[i][2]);
-        BN expect_m = priv.Decrypt_v0(c);
+        BN expect_m = priv.Decrypt(c);
         expect_m.ToHexStr(s);
         EXPECT_EQ(m , expect_m);
     }

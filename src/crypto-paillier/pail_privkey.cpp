@@ -85,14 +85,7 @@ PailPrivKey::PailPrivKey() {
 
 std::string PailPrivKey::Inspect() const {
     std::string str;
-    str.append("Paillier's Private Key: ");
-    str.append("\n  -  lambda: ");
-    str.append(lambda_.Inspect());
-    str.append("\n  -  mu: ");
-    str.append(mu_.Inspect());
-    str.append("\n  -  n: ");
-    str.append(n_.Inspect());
-    str.append("\n");
+    this->ToJsonString(str);
     return str;
 }
 
@@ -104,6 +97,26 @@ std::string PailPrivKey::Inspect() const {
  * @param {BN} c: encrypted number
  */
 BN PailPrivKey::Decrypt(const BN &c) const {
+    bool use_slow = ((p_ == 0)
+                     || (q_ == 0)
+                     || (p_sqr_ == 0)
+                     || (q_sqr_ == 0)
+                     || (p_minus_1_ == 0)
+                     || (q_minus_1_ == 0)
+                     || (hp_ == 0)
+                     || (hq_ == 0)
+                     || (q_inv_p_ == 0)
+                     || (p_inv_q_ == 0)
+    );
+
+    if (use_slow) {
+        return DecryptSlowly(c);
+    } else {
+        return DecryptFast(c);
+    }
+}
+
+BN PailPrivKey::DecryptFast(const BN &c) const {
     BN x = c.PowM(p_minus_1_, p_sqr_);
     BN lpx = (x - 1) / p_;
     BN mp = (lpx * hp_) % p_;
@@ -121,7 +134,7 @@ BN PailPrivKey::Decrypt(const BN &c) const {
     return (item1 + item2) % n_;
 }
 
-BN PailPrivKey::Decrypt_v0(const BN &c) const {
+BN PailPrivKey::DecryptSlowly(const BN &c) const {
     BN x = c.PowM(lambda_, n_sqr_);
     BN l = (x - 1) / n_;
     return (l * mu_) % n_;
