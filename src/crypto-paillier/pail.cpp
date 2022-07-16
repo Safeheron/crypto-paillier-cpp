@@ -28,7 +28,7 @@ void CreateKeyPair(PailPrivKey &priv, PailPubKey &pub, int key_bits) {
     BN q;
     // make sure: p != q
     do {
-        q = safeheron::rand::RandomSafePrimeStrict(key_bits / 2 - 1);
+        q = safeheron::rand::RandomSafePrimeStrict(key_bits / 2);
     } while (p == q);
 
     // make sure: p > q
