@@ -1,4 +1,3 @@
-
 #ifndef SAFEHERON_CRYPTO_PAIL_PRIVKEY_H
 #define SAFEHERON_CRYPTO_PAIL_PRIVKEY_H
 
@@ -60,17 +59,26 @@ public:
      * Decrypt:
      *     c = L(c^lambda mod n^2) * mu mod n
      *
+     * @return plain m
      * @param {safeheron::bignum::BN} c: encrypted number
      */
     safeheron::bignum::BN Decrypt(const safeheron::bignum::BN &c) const;
 
-    safeheron::bignum::BN n() const { return n_; }
+    /**
+     * Decrypt and get m, where m is in [-(n-1)/2, m <= (n-1)/2]
+     * @param c
+     * @return plain m
+     * @remark The message decrypted with "PailPrivKey.DecryptNeg" should be encrypted with "PailPubKey.EncryptNeg" or with "PailPubKey.EncryptNegWithR".
+     */
+    safeheron::bignum::BN DecryptNeg(const safeheron::bignum::BN &c) const;
 
-    safeheron::bignum::BN n_sqr() const { return n_sqr_; }
+    const safeheron::bignum::BN &n() const { return n_; }
 
-    safeheron::bignum::BN mu() const { return mu_; }
+    const safeheron::bignum::BN &n_sqr() const { return n_sqr_; }
 
-    safeheron::bignum::BN lambda() const { return lambda_; }
+    const safeheron::bignum::BN &mu() const { return mu_; }
+
+    const safeheron::bignum::BN &lambda() const { return lambda_; }
 
 
     bool ToProtoObject(safeheron::proto::PailPriv &pail_priv) const;

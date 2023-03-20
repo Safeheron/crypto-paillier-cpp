@@ -1,8 +1,8 @@
-
 #include "pail_pubkey.h"
 #include <google/protobuf/util/json_util.h>
 #include "crypto-bn/rand.h"
 #include "crypto-encode/base64.h"
+#include "exception/safeheron_exceptions.h"
 
 using std::string;
 using safeheron::bignum::BN;
@@ -11,6 +11,7 @@ using google::protobuf::util::MessageToJsonString;
 using google::protobuf::util::JsonStringToMessage;
 using google::protobuf::util::JsonPrintOptions;
 using google::protobuf::util::JsonParseOptions;
+using safeheron::exception::LocatedException;
 
 namespace safeheron{
 namespace pail {
@@ -71,6 +72,43 @@ BN PailPubKey::Encrypt(const BN &m) const {
     return (gm * rn) % n_sqr_;
 }
 
+bool PailPubKey::IsValidPlainMsg(const safeheron::bignum::BN &m) const{
+    BN half_n = n_ >> 1;
+    return (half_n.Neg() <= m) && (m <= half_n);
+}
+
+BN PailPubKey::EncryptNegWithR(const BN &m, const BN &r) const {
+    BN mm;
+    BN half_n = n_ >> 1;
+    bool ok = (half_n.Neg() <= m) && (m <= half_n);
+    if(!ok) {
+        throw LocatedException(__FILE__, __LINE__, __FUNCTION__, -1, "the plain m is invalid.");
+    }
+
+    if(m < 0){
+        mm = m + n_;
+    } else{
+        mm = m;
+    }
+
+    return EncryptWithR(mm, r);
+}
+
+BN PailPubKey::EncryptNeg(const BN &m) const {
+    BN mm;
+    BN half_n = n_ >> 1;
+    bool ok = (half_n.Neg() <= m) && (m <= half_n);
+    if(!ok) {
+        throw LocatedException(__FILE__, __LINE__, __FUNCTION__, -1, "the plain m is invalid.");
+    }
+    if(m < 0){
+        mm = m + n_;
+    } else{
+        mm = m;
+    }
+
+    return Encrypt(mm);
+}
 
 /**
  * Homomorphic add:
@@ -91,6 +129,20 @@ BN PailPubKey::HomomorphicAdd(const BN &e_a, const BN &e_b) const {
 BN PailPubKey::HomomorphicAddPlain(const BN &e_a, const BN &b) const {
     BN gb = (b * n_ + 1) % n_sqr_;
     return (e_a * gb) % n_sqr_;
+}
+
+/**
+ * Homomorphic add plain:
+ *     E(a+b) = E(a) * g^b * r^n mod n^2
+ *            = E(a) * (1 + b*n) * r^n mod n^2
+ * @param {safeheron::bignum::BN} e_a: encrypted num a
+ * @param {safeheron::bignum::BN} b: plain num b
+ * @param {safeheron::bignum::BN} r: plain num r
+ */
+BN PailPubKey::HomomorphicAddPlainWithR(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &b, const safeheron::bignum::BN &r) const{
+    BN gb = (b * n_ + 1) % n_sqr_;
+    BN rn = r.PowM(n_, n_sqr_);
+    return (e_a * gb * rn) % n_sqr_;
 }
 
 /**

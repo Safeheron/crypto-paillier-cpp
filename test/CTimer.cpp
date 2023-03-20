@@ -1,7 +1,3 @@
-//
-// Created by Sword03 on 2022/6/23.
-//
-
 #include "CTimer.h"
 #include <chrono>
 #include <iostream>

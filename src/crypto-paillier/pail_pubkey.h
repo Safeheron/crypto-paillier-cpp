@@ -48,6 +48,30 @@ public:
     safeheron::bignum::BN Encrypt(const safeheron::bignum::BN &m) const;
 
     /**
+     * Check the plain message is valid. It means that m is in range [-(n-1)/2, m <= (n-1)/2]
+     * @param m
+     * @return
+     */
+    bool IsValidPlainMsg(const safeheron::bignum::BN &m) const;
+
+    /**
+     * Encrypt m, where m is in [-(n-1)/2, m <= (n-1)/2]
+     * @param m
+     * @param r
+     * @return
+     * @remark The message decrypted with "PailPrivKey.DecryptNeg" should be encrypted with "PailPubKey.EncryptNeg" or with "PailPubKey.EncryptNegWithR".
+     */
+    safeheron::bignum::BN EncryptNegWithR(const safeheron::bignum::BN &m, const safeheron::bignum::BN &r) const;
+
+    /**
+     * Encrypt m, where m is in [-(n-1)/2, m <= (n-1)/2]
+     * @param m
+     * @return
+     * @remark The message decrypted with "PailPrivKey.DecryptNeg" should be encrypted with "PailPubKey.EncryptNeg" or with "PailPubKey.EncryptNegWithR".
+     */
+    safeheron::bignum::BN EncryptNeg(const safeheron::bignum::BN &m) const;
+
+    /**
      * Homomorphic add:
      *     E(a+b) = E(a) * E(b) mod n^2
      * @param {safeheron::bignum::BN} e_a: encrypted num a
@@ -65,6 +89,16 @@ public:
     safeheron::bignum::BN HomomorphicAddPlain(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &b) const;
 
     /**
+     * Homomorphic add plain:
+     *     E(a+b) = E(a) * g^b * r^n mod n^2
+     *            = E(a) * (1 + b*n) * r^n mod n^2
+     * @param {safeheron::bignum::BN} e_a: encrypted num a
+     * @param {safeheron::bignum::BN} b: plain num b
+     * @param {safeheron::bignum::BN} r: plain num r
+     */
+    safeheron::bignum::BN HomomorphicAddPlainWithR(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &b, const safeheron::bignum::BN &r) const;
+
+    /**
      * Homomorphic multiple:
      *     E(ka) = E(a) ^ k mod n^2
      * @param {safeheron::bignum::BN} e_a: encrypted num a
@@ -72,11 +106,11 @@ public:
      */
     safeheron::bignum::BN HomomorphicMulPlain(const safeheron::bignum::BN &e_a, const safeheron::bignum::BN &k) const;
 
-    safeheron::bignum::BN n() const { return n_; }
+    const safeheron::bignum::BN& n() const { return n_; }
 
-    safeheron::bignum::BN g() const { return g_; }
+    const safeheron::bignum::BN& g() const { return g_; }
 
-    safeheron::bignum::BN n_sqr() const { return n_sqr_; }
+    const safeheron::bignum::BN& n_sqr() const { return n_sqr_; }
 
     bool ToProtoObject(safeheron::proto::PailPub &pail_pub) const;
 

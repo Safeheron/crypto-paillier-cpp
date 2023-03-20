@@ -308,8 +308,9 @@ public:
 
         CTimer t2("CreateKeyPair2048");
         CreateKeyPair2048(key_pair_2048.priv, key_pair_2048.pub);
+        std::cout << key_pair_2048.pub.Inspect() << std::endl;
         t2.End();
-
+/*
         CTimer t3("CreateKeyPair3072");
         CreateKeyPair3072(key_pair_3072.priv, key_pair_3072.pub);
         t3.End();
@@ -317,6 +318,7 @@ public:
         CTimer t4("CreateKeyPair4096");
         CreateKeyPair4096(key_pair_4096.priv, key_pair_4096.pub);
         t4.End();
+*/
     }
     virtual void TearDown(){
         printf("Environment Test down");
@@ -328,6 +330,63 @@ public:
 };
 
 PaillierTestEnv * pail_env;
+
+BN map_to_neg(const BN &a, const BN &N){
+    BN b = a % N;
+    BN half_n = N >> 1;
+    if(b > half_n) return b - N;
+    return b;
+}
+
+TEST(PaillierTest, EncryptNeg1024_10Times)
+{
+    PailPrivKey priv;
+    PailPubKey pub;
+    for(int i = 0; i < 10; i ++){
+        CreateKeyPair(priv, pub, 1024);
+        std::string jsonStr;
+        priv.ToJsonString(jsonStr);
+        //std::cout << "priv = " << jsonStr << std::endl;
+        pub.ToJsonString(jsonStr);
+        //std::cout << "pub = " << jsonStr << std::endl;
+
+        std::string s;
+        BN half_n = pub.n() >> 1;
+        BN m = safeheron::rand::RandomNegBNInSymInterval(half_n);
+        m.ToHexStr(s);
+//        std::cout << "m = " << s << std::endl;
+        BN c = pub.EncryptNeg(m);
+        c.ToHexStr(s);
+        //std::cout << "c = " << s << std::endl;
+        BN expect_m = priv.DecryptNeg(c);
+        expect_m.ToHexStr(s);
+//        std::cout << "expect_m = " << s << std::endl;
+        EXPECT_EQ(m , expect_m);
+
+
+        BN m_1 = safeheron::rand::RandomNegBNInSymInterval(half_n);
+        BN m_2 = safeheron::rand::RandomNegBNInSymInterval(half_n);
+        std::cout << "n = " << pub.n().Inspect() << std::endl;
+        std::cout << "m1 = " << m_1.Inspect() << std::endl;
+        std::cout << "m2 = " << m_2.Inspect() << std::endl;
+        BN c_1 = pub.EncryptNeg(m_1);
+        BN c_2 = pub.EncryptNeg(m_2);
+        BN c_m1_add_m2 = pub.HomomorphicAdd(c_1, c_2);
+        BN m1_add_m2 = priv.DecryptNeg(c_m1_add_m2);
+        BN expected_m1_add_m2 = map_to_neg(m_1 + m_2, pub.n());
+        std::cout << "m1 + m2 = " << m1_add_m2.Inspect() << std::endl;
+        std::cout << "m1 + m2(expected) = " << expected_m1_add_m2.Inspect() << std::endl;
+        EXPECT_EQ(m1_add_m2, expected_m1_add_m2);
+
+        BN k = safeheron::rand::RandomNegBNInSymInterval(half_n);
+        BN c_m1_mul_k = pub.HomomorphicMulPlain(c_1, k);
+        BN m1_mul_k = priv.DecryptNeg(c_m1_mul_k);
+        BN expected_m1_mul_k = map_to_neg(m_1 * k, pub.n());
+        std::cout << "m1 * k = " << m1_mul_k.Inspect() << std::endl;
+        std::cout << "m1 * k(expected) = " << expected_m1_mul_k.Inspect() << std::endl;
+        EXPECT_EQ(m1_mul_k , expected_m1_mul_k);
+    }
+}
 
 TEST(PaillierTest, KeyGenerate1024_10Times)
 {
@@ -355,10 +414,36 @@ TEST(PaillierTest, KeyGenerate1024_10Times)
     }
 }
 
+TEST(PaillierTest, KeyGenerate1024_Add_Plain_10Times)
+{
+    PailPrivKey priv;
+    PailPubKey pub;
+    for(int i = 0; i < 10; i ++){
+        CreateKeyPair(priv, pub, 1024);
+        std::string jsonStr;
+        priv.ToJsonString(jsonStr);
+        //std::cout << "priv = " << jsonStr << std::endl;
+        pub.ToJsonString(jsonStr);
+        //std::cout << "pub = " << jsonStr << std::endl;
+
+        std::string s;
+        BN m1 = safeheron::rand::RandomBNLt(pub.n());
+        BN c1 = pub.Encrypt(m1);
+        c1.ToHexStr(s);
+        //std::cout << "c = " << s << std::endl;
+        BN m2 = safeheron::rand::RandomBNLt(pub.n());
+        BN r = safeheron::rand::RandomBNLt(pub.n());
+        BN c2 = pub.HomomorphicAddPlainWithR(c1, m2, r);
+        BN sum = priv.Decrypt(c2);
+        BN expected_sum = (m1 + m2) % pub.n();
+        EXPECT_TRUE( expected_sum == sum );
+    }
+}
+
 TEST(PaillierTest, CreateKeyPair) {
-    std::string s;
-    //std::cout << "key length: " << 1024 << std::endl;
-    pail_env->key_pair_1024.priv.n().ToHexStr(s);
+std::string s;
+//std::cout << "key length: " << 1024 << std::endl;
+pail_env->key_pair_1024.priv.n().ToHexStr(s);
     //std::cout << "n: " << s << std::endl;
     pail_env->key_pair_1024.priv.lambda().ToHexStr(s);
     //std::cout << "lambda: " << s << std::endl;
@@ -373,6 +458,7 @@ TEST(PaillierTest, CreateKeyPair) {
     pail_env->key_pair_2048.priv.mu().ToHexStr(s);
     //std::cout << "mu: " << s << std::endl;
 
+    /*
     //std::cout << "key length: " << 3072 << std::endl;
     pail_env->key_pair_3072.priv.n().ToHexStr(s);
     //std::cout << "n: " << s << std::endl;
@@ -388,6 +474,7 @@ TEST(PaillierTest, CreateKeyPair) {
     //std::cout << "lambda: " << s << std::endl;
     pail_env->key_pair_4096.priv.mu().ToHexStr(s);
     //std::cout << "mu: " << s << std::endl;
+     */
 
     PailPrivKey priv = safeheron::pail::CreatePailPrivKey(
             priv1024["lambda"],

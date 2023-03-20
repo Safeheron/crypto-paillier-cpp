@@ -1,7 +1,3 @@
-//
-// Created by Sword03 on 2022/6/23.
-//
-
 #ifndef BLOCKCHAIN_CRYPTO_MPC_CTIMER_H
 #define BLOCKCHAIN_CRYPTO_MPC_CTIMER_H
 

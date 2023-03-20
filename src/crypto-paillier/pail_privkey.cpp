@@ -1,5 +1,3 @@
-
-
 #include "pail_privkey.h"
 #include <google/protobuf/util/json_util.h>
 #include "crypto-bn/rand.h"
@@ -106,6 +104,18 @@ BN PailPrivKey::Decrypt(const BN &c) const {
         return DecryptFast(c);
     }
 }
+
+BN PailPrivKey::DecryptNeg(const BN &c) const {
+    BN half_n = n_ >> 1;
+    BN m = Decrypt(c);
+    if(m > half_n) {
+        return m - n_;
+    }
+    else {
+        return m;
+    }
+}
+
 
 BN PailPrivKey::DecryptFast(const BN &c) const {
     BN x = c.PowM(p_minus_1_, p_sqr_);
