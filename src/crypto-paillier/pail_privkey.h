@@ -80,6 +80,9 @@ public:
 
     const safeheron::bignum::BN &lambda() const { return lambda_; }
 
+    const safeheron::bignum::BN &p() const { return p_; }
+
+    const safeheron::bignum::BN &q() const { return q_; }
 
     bool ToProtoObject(safeheron::proto::PailPriv &pail_priv) const;
 
